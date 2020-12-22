@@ -1,13 +1,16 @@
-import logo from './logo.svg';
+import { Route, Switch } from "react-router-dom";
+import Home from "./views/Home";
+import Account from "./views/Account";
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <a href="https://localhost:8080/auth/yahoo">Sign On with Yahoo</a>
-      </header>
-    </div>
+    <main>
+      <Switch>
+        <Route path="/" exact component={Home} />
+        <Route path="/account" component={Account} />
+      </Switch>
+    </main>
   );
 }
 
