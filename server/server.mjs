@@ -2,11 +2,11 @@ import express from 'express';
 import { createServer } from 'https';
 import { readFileSync } from 'fs';
 import createOAuthClient from './yahoo-client.mjs';
+import { retrieveMatchup } from './fantasy-service.mjs';
 import { Strategy } from 'openid-client';
 
 import expressSesssion from 'express-session';
 import passport from 'passport';
-import got from 'got';
 
 const options = {
   key: readFileSync('server/key.pem'),
@@ -53,17 +53,7 @@ createOAuthClient().then(client => {
   });
 
   app.get('/account', (req, res) => {
-
-    (async () => {
-      const response = await got('https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/games;game_keys=nba/teams', {
-        headers: {
-          Authorization: `Bearer ${req.user.token}`
-        }
-      });
-      console.log(response.body);
-      console.log('fetched account');
-      res.send(response.body);
-    })();
+    retrieveMatchup(req.user.token).then(x => res.send(x));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {
