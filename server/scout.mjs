@@ -1,60 +1,55 @@
-import { YahooFantasyService } from './yahoo-fantasy-service.mjs';
+import YahooFantasyService from './yahoo-fantasy-service.mjs';
 
-class Scout {
+export default class Scout {
 
     constructor() {
         this.fantasyService = new YahooFantasyService();
     }
 
-    retrieveRoster(user) {
-        // this.fantasyService.retrieveMatchup(user, 1)
-        
-
-    // new YahooFantasyService().retrieveMatchup(req.user, 1).then( (mu) => {
-    //   const matchup = mu.teams_in_matchup;
-    //   const player = matchup[0].roster[0];
+    // retrieveRoster(user) {
+    // // new YahooFantasyService().retrieveMatchup(req.user, 1).then( (mu) => {
+    // //   const matchup = mu.teams_in_matchup;
+    // //   const player = matchup[0].roster[0];
       
-    //   // get projected stats for players in matchup
-    //   playerPerGameProjections.get(player.name).then(x => console.log(x));
+    // //   // get projected stats for players in matchup
+    // //   playerPerGameProjections.get(player.name).then(x => console.log(x));
 
-    //   res.send(mu);
-    // });
+    // //   res.send(mu);
+    // // });
         
-    }
+    // }
 
-    report(user, date) {
-
+    async report(user, date) {
+        console.log(user.token);
         // get roster
-        console.log(this.retrieveRoster(user));
+        const roster = await this.fantasyService.retrieveMatchup(user, 1);
         // get schedule
         // get predicted stats
 
-
         return {
             date: date,
-            matchup: [{
-                team: 'Team A',
-                roster: [
-                    {
-                        name: 'James Harden',
-                        stats: {
-                            pts: [30.0]
-                        }
-                    }
-                ]
-            }, {
-                team: 'Team B',
-                roster: [
-                    {
-                        name: 'Devin Booker',
-                        stats: {
-                            pts: [25.0]
-                        }
-                    }
-                ]
-            }]
+            matchup: roster.matchup
+            // matchup: [{
+            //     team: 'Team A',
+            //     roster: [
+            //         {
+            //             name: 'James Harden',
+            //             stats: {
+            //                 pts: [30.0]
+            //             }
+            //         }
+            //     ]
+            // }, {
+            //     team: 'Team B',
+            //     roster: [
+            //         {
+            //             name: 'Devin Booker',
+            //             stats: {
+            //                 pts: [25.0]
+            //             }
+            //         }
+            //     ]
+            // }]
         };
     }
 }
-
-export { Scout };

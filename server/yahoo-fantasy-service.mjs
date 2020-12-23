@@ -1,7 +1,7 @@
 import got from 'got';
 import parser from 'fast-xml-parser';
 
-class YahooFantasyService {
+export default class YahooFantasyService {
     extractTeam(team, roster) {
         return {
             team_key: team.team_key,
@@ -16,7 +16,7 @@ class YahooFantasyService {
             player_key: player.player_key,
             name: player.name.full,
             selected_position: player.selected_position.position,
-            team: player.editorial_team_abbr
+            team: player.editorial_team_abbr.toUpperCase()
         };
     }
     
@@ -36,9 +36,7 @@ class YahooFantasyService {
         });
         
         return {
-            teams_in_matchup: teamsInMatchup 
+            matchup: teamsInMatchup 
         }
     }
 }
-
-export { YahooFantasyService }

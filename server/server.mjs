@@ -6,7 +6,7 @@ import { Strategy } from 'openid-client';
 
 import expressSesssion from 'express-session';
 import passport from 'passport';
-import { Scout } from './scout.mjs';
+import Scout from './scout.mjs';
 
 const options = {
   key: readFileSync('key.pem'),
@@ -53,7 +53,8 @@ createOAuthClient().then(client => {
   });
 
   app.get('/account', (req, res) => {
-    res.send(new Scout().report(req.user, new Date(2020, 12, 22)));
+    const scout = new Scout();
+    scout.report(req.user, new Date(2020, 12, 22)).then(r => res.send(r));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {

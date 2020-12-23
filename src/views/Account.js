@@ -23,7 +23,7 @@ const Home = () => {
       {matchup == null ?
         'Loading...' :
           // console still complaining about unique key prop
-        matchup.matchup.map(t =><p>{t.team}</p>)
+        matchup.matchup.map(t =><p>{t.name}</p>)
       }
 
       <p>

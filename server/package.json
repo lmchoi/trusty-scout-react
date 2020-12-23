@@ -24,6 +24,11 @@
       "js",
       "mjs"
     ],
-    "testMatch": ["<rootDir>/**/*.test.mjs"]
+    "testMatch": [
+      "<rootDir>/**/*.test.mjs"
+    ]
+  },
+  "devDependencies": {
+    "nock": "^13.0.5"
   }
 }
