@@ -2,15 +2,15 @@ import express from 'express';
 import { createServer } from 'https';
 import { readFileSync } from 'fs';
 import createOAuthClient from './yahoo-client.mjs';
-import { retrieveMatchup } from './fantasy-service.mjs';
 import { Strategy } from 'openid-client';
 
 import expressSesssion from 'express-session';
 import passport from 'passport';
+import { Scout } from './scout.mjs';
 
 const options = {
-  key: readFileSync('server/key.pem'),
-  cert: readFileSync('server/cert.pem')
+  key: readFileSync('key.pem'),
+  cert: readFileSync('cert.pem')
 };
 
 // Constants
@@ -53,7 +53,7 @@ createOAuthClient().then(client => {
   });
 
   app.get('/account', (req, res) => {
-    retrieveMatchup(req.user.token).then(x => res.send(x));
+    res.send(new Scout().report(req.user, new Date(2020, 12, 22)));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {

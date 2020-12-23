@@ -22,12 +22,8 @@ const Home = () => {
 
       {matchup == null ?
         'Loading...' :
-        matchup.teams_in_matchup.map(t =>
           // console still complaining about unique key prop
-          <p>
-            <a href={t.url} key={t.team_key}>{t.name}</a>
-          </p>
-        )
+        matchup.matchup.map(t =><p>{t.team}</p>)
       }
 
       <p>

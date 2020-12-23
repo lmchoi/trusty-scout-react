@@ -1,6 +1,24 @@
 import got from 'got';
 import parser from 'fast-xml-parser';
 
+function extractTeam(team, roster) {
+    return {
+        team_key: team.team_key,
+        name: team.name,
+        url: team.url,
+        roster: roster,
+    };
+}
+
+function extractPlayer(player) {
+    return {
+        player_key: player.player_key,
+        name: player.name.full,
+        selected_position: player.selected_position.position,
+        team: player.editorial_team_abbr
+    };
+}
+
 const retrieveMatchup = async (token) => {
     console.log(token);
     const response = await got('https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/teams/matchups;weeks=1/teams/roster', {
@@ -22,21 +40,3 @@ const retrieveMatchup = async (token) => {
 };
 
 export { retrieveMatchup }
-
-function extractTeam(team, roster) {
-    return {
-        team_key: team.team_key,
-        name: team.name,
-        url: team.url,
-        roster: roster,
-    };
-}
-
-function extractPlayer(player) {
-    return {
-        player_key: player.player_key,
-        name: player.name.full,
-        selected_position: player.selected_position.position,
-        team: player.editorial_team_abbr
-    };
-}
