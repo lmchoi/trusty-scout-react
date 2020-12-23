@@ -1,9 +1,13 @@
-import YahooFantasyService from './yahoo-fantasy-service.mjs';
+import YahooFantasyService from './yahoo-fantasy-service.mjs'
+import ScheduleService from './schedule-service.mjs'
+import ProjectionService from './projection-service.mjs'
 
 export default class Scout {
 
     constructor() {
         this.fantasyService = new YahooFantasyService();
+        this.scheduleService = new ScheduleService();    
+        this.ProjectionService = new ProjectionService();
     }
 
     // retrieveRoster(user) {
@@ -19,13 +23,7 @@ export default class Scout {
         
     // }
 
-    async report(user, date) {
-        console.log(user.token);
-        // get roster
-        const roster = await this.fantasyService.retrieveMatchup(user, 1);
-        // get schedule
-        // get predicted stats
-
+    generateReport(date, roster, schedule, projections) {
         return {
             date: date,
             matchup: roster.matchup
@@ -51,5 +49,14 @@ export default class Scout {
             //     ]
             // }]
         };
+    }
+
+    async report(user, date) {
+        console.log(user.token);
+        const roster = await this.fantasyService.retrieveMatchup(user, 1);
+        const schedule = await this.scheduleService.retrieveSchedule(date);
+        const projections = await this.ProjectionService.retrieveProjections();
+
+        return this.generateReport(date, roster, schedule, projections);
     }
 }

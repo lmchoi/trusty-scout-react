@@ -54,7 +54,9 @@ createOAuthClient().then(client => {
 
   app.get('/account', (req, res) => {
     const scout = new Scout();
-    scout.report(req.user, new Date(2020, 12, 22)).then(r => res.send(r));
+    // TODO make configurable
+    const dateToReport = new Date('2020-12-23');
+    scout.report(req.user, dateToReport).then(r => res.send(r));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {

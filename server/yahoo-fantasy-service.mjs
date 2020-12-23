@@ -16,6 +16,7 @@ export default class YahooFantasyService {
             player_key: player.player_key,
             name: player.name.full,
             selected_position: player.selected_position.position,
+            // TODO convert to NOP, SAS, GSW etc
             team: player.editorial_team_abbr.toUpperCase()
         };
     }

@@ -1,11 +1,11 @@
 import YahooFantasyService from './yahoo-fantasy-service.mjs';
+import ScheduleService from './schedule-service.mjs';
 import Scout from './scout.mjs'
 import { jest } from '@jest/globals'
 
-
 test('generate scout report for a given date', async () => {
     const scout = new Scout();
-    const dateToReport = new Date(2020, 12, 22);
+    const dateToReport = new Date('2020-12-23');
     const user = {
         token: ''
     };
@@ -27,6 +27,12 @@ test('generate scout report for a given date', async () => {
             url: 'https://basketball.fantasysports.yahoo.com/nba/23350/1',
             roster: [
                 {
+                    player_key: '402.p.5660',
+                    name: 'Dejounte Murray',
+                    selected_position: 'Util',
+                    team: 'SA'
+                },
+                {
                     player_key: '402.p.4895',
                     name: 'Marcus Morris Sr.',
                     selected_position: 'BN',
@@ -45,6 +51,21 @@ test('generate scout report for a given date', async () => {
     const mockRetrieveMatchup = jest.fn();
     YahooFantasyService.prototype.retrieveMatchup = mockRetrieveMatchup;
     mockRetrieveMatchup.mockReturnValue(Promise.resolve(matchupRetrieved));
+    
+    const matchupsOnTheDay = new Map([
+        ['POR', 'UTA'],
+        ['UTA', 'POR'],
+        ['SA', 'MEM'],
+        ['MEM', 'SA']
+    ]);
+
+    const scheduleRetrieved = new Map([
+        [dateToReport, matchupsOnTheDay]
+    ]);
+
+    const mockRetrieveSchedule = jest.fn();
+    ScheduleService.prototype.retrieveSchedule = mockRetrieveSchedule;
+    mockRetrieveSchedule.mockReturnValue(Promise.resolve(scheduleRetrieved));
 
     const scoutReport = await scout.report(user, dateToReport);
     const expectedReport = {
@@ -83,6 +104,4 @@ test('generate scout report for a given date', async () => {
         }]
     };
     expect(scoutReport).toMatchObject(expectedReport)
-    // expect(scoutReport.date).toEqual(dateToReport);
-    // expect(scoutReport.matchup).toHaveLength(2);
 });
