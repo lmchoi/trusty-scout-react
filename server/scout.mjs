@@ -124,29 +124,32 @@ export default class Scout {
     generateDayReport(date, roster, schedule, projections) {
         return {
             date: date,
-            matchup: this.generateMatchupStats(roster.matchup, schedule.get(date), projections)
+            // TODO should probably move the logic to get schedule for a particular day to the schedule service
+            matchup: this.generateMatchupStats(roster.matchup, schedule.get(date.getTime()), projections)
         };
     }
 
-    async report(user, date, numberOfDays) {
+    async report(user, week) {
+        // TODO calculate date based on week (2020-12-22) and get stats for 7 days
+        const dateToReport = new Date('2020-12-22'); // week 1
+
         console.log(user.token);
         // once only for now until there is projections based on date
         const projections = await this.ProjectionService.retrieveProjections();
 
         // get matchup for this week
-        const matchup = await this.fantasyService.retrieveMatchup(user, 1);
+        const matchup = await this.fantasyService.retrieveMatchup(user, week);
 
         const team1 = matchup.matchup[0].team_key;
         const team2 = matchup.matchup[1].team_key;
-        const roster = await this.fantasyService.retrieveRoster(user, new Date('2020-12-22'), team1, team2);
+        const roster = await this.fantasyService.retrieveRoster(user, dateToReport, team1, team2);
 
         // for each day, find the roster
-        const schedule = await this.scheduleService.retrieveSchedule(date);
-
+        const schedule = await this.scheduleService.retrieveSchedule(dateToReport);
         // generate report for each day
 
         // put report together for the week
 
-        return this.generateDayReport(date, roster, schedule, projections);
+        return this.generateDayReport(dateToReport, roster, schedule, projections);
     }
 }

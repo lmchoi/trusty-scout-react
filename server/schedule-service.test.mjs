@@ -6,7 +6,7 @@ test('parse schedule', async () => {
 
     const schedule = await scheduleService.retrieveSchedule(dateToReport);
 
-    const scheduleOnDate = schedule.get(dateToReport);
+    const scheduleOnDate = schedule.get(dateToReport.getTime());
     expect(scheduleOnDate.get('POR')).toEqual('UTA');
     expect(scheduleOnDate.get('UTA')).toEqual('POR');
     expect(scheduleOnDate.get('MEM')).toEqual('SAS');

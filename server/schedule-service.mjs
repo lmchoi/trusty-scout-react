@@ -31,7 +31,7 @@ export default class ScheduleService {
                 matchupsOnTheDay.set(game.home, game.away);
                 matchupsOnTheDay.set(game.away, game.home);
             });
-        schedule.set(dateToReport, matchupsOnTheDay);
+        schedule.set(dateToReport.getTime(), matchupsOnTheDay);
 
         return schedule;
     }

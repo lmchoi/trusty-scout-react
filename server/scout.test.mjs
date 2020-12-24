@@ -5,7 +5,7 @@ import { jest } from '@jest/globals'
 
 test('generate scout report for a given date', async () => {
     const scout = new Scout();
-    const dateToReport = new Date('2020-12-23');
+    const dateToReport = new Date('2020-12-22');
     const user = {
         token: ''
     };
@@ -78,14 +78,14 @@ test('generate scout report for a given date', async () => {
     ]);
 
     const scheduleRetrieved = new Map([
-        [dateToReport, matchupsOnTheDay]
+        [dateToReport.getTime(), matchupsOnTheDay]
     ]);
 
     const mockRetrieveSchedule = jest.fn();
     ScheduleService.prototype.retrieveSchedule = mockRetrieveSchedule;
     mockRetrieveSchedule.mockReturnValue(Promise.resolve(scheduleRetrieved));
-
-    const scoutReport = await scout.report(user, dateToReport, 1);
+    
+    const scoutReport = await scout.report(user, 1);
     const expectedReport = {
         date: dateToReport,
         matchup: [{

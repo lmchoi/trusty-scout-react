@@ -5,9 +5,14 @@ const Home = () => {
 
   useEffect(() => {
     (async () => {
-      const response = await fetch('https://localhost:8080/account', {
+      const url = 'https://localhost:8080/matchup' + new URLSearchParams({
+        week: 1
+      });
+
+      const response = await fetch(url, {
         credentials: 'include'
       });
+      
       const matchup = await response.json();
       console.log(matchup);
       setMatchup(matchup);
@@ -22,8 +27,8 @@ const Home = () => {
 
       {matchup == null ?
         'Loading...' :
-          // console still complaining about unique key prop
-        matchup.matchup.map(t =><p>{t.name}</p>)
+        // console still complaining about unique key prop
+        matchup.matchup.map(t => <p>{t.name}</p>)
       }
 
       <p>

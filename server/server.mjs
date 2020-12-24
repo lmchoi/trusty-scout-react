@@ -52,11 +52,9 @@ createOAuthClient().then(client => {
     next();
   });
 
-  app.get('/account', (req, res) => {
+  app.get('/matchup', (req, res) => {
     const scout = new Scout();
-    // TODO make configurable
-    const dateToReport = new Date('2020-12-26');
-    scout.report(req.user, dateToReport, 7).then(r => res.send(r));
+    scout.report(req.user, req.query.week).then(r => res.send(r));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {
@@ -65,7 +63,7 @@ createOAuthClient().then(client => {
 
   app.get('/auth/yahoo/return', (req, res, next) => {
     passport.authenticate('oidc', {
-      successRedirect: 'http://localhost:3000/account',
+      successRedirect: 'http://localhost:3000/return',
       failureRedirect: '/'
     })(req, res, next);
   });

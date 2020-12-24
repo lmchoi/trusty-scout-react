@@ -1,14 +1,15 @@
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, Redirect } from "react-router-dom";
 import Home from "./views/Home";
-import Account from "./views/Account";
+import Matchup from "./views/Matchup";
 import './App.css';
 
 function App() {
   return (
     <main>
       <Switch>
+        <Redirect from="/return" to="/matchup" />
         <Route path="/" exact component={Home} />
-        <Route path="/account" component={Account} />
+        <Route path="/matchup" component={Matchup} />
       </Switch>
     </main>
   );
