@@ -69,7 +69,6 @@ export default class Scout {
         }
 
         return {
-            player_key: player.player_key,
             name: player.name,
             selected_position: player.selected_position,
             team: player.team,
@@ -131,9 +130,22 @@ export default class Scout {
 
     async report(user, date, numberOfDays) {
         console.log(user.token);
-        const roster = await this.fantasyService.retrieveMatchup(user, 1, date);
-        const schedule = await this.scheduleService.retrieveSchedule(date);
+        // once only for now until there is projections based on date
         const projections = await this.ProjectionService.retrieveProjections();
+
+        // get matchup for this week
+        const matchup = await this.fantasyService.retrieveMatchup(user, 1);
+
+        const team1 = matchup.matchup[0].team_key;
+        const team2 = matchup.matchup[1].team_key;
+        const roster = await this.fantasyService.retrieveRoster(user, new Date('2020-12-22'), team1, team2);
+
+        // for each day, find the roster
+        const schedule = await this.scheduleService.retrieveSchedule(date);
+
+        // generate report for each day
+
+        // put report together for the week
 
         return this.generateDayReport(date, roster, schedule, projections);
     }

@@ -14,6 +14,18 @@ test('generate scout report for a given date', async () => {
         matchup: [{
             name: 'LA Kardashians',
             team_key: '402.l.23350.t.2',
+            url: 'https://basketball.fantasysports.yahoo.com/nba/23350/2'
+        }, {
+            name: 'Manglre',
+            team_key: '402.l.23350.t.1',
+            url: 'https://basketball.fantasysports.yahoo.com/nba/23350/1'
+        }]
+    };
+
+    const rosterRetrieved = {
+        matchup: [{
+            name: 'LA Kardashians',
+            team_key: '402.l.23350.t.2',
             url: 'https://basketball.fantasysports.yahoo.com/nba/23350/2',
             roster: [{
                 player_key: '402.p.5161',
@@ -49,9 +61,14 @@ test('generate scout report for a given date', async () => {
         }]
     };
 
+
     const mockRetrieveMatchup = jest.fn();
     YahooFantasyService.prototype.retrieveMatchup = mockRetrieveMatchup;
     mockRetrieveMatchup.mockReturnValue(Promise.resolve(matchupRetrieved));
+
+    const mockRetrieveRoster = jest.fn();
+    YahooFantasyService.prototype.retrieveRoster = mockRetrieveRoster;
+    mockRetrieveRoster.mockReturnValue(Promise.resolve(rosterRetrieved));
 
     const matchupsOnTheDay = new Map([
         ['POR', 'UTA'],
@@ -74,7 +91,6 @@ test('generate scout report for a given date', async () => {
         matchup: [{
             name: 'LA Kardashians',
             roster: expect.arrayContaining([{
-                player_key: '402.p.5161',
                 name: 'CJ McCollum',
                 selected_position: 'PG',
                 team: 'POR',
@@ -96,7 +112,6 @@ test('generate scout report for a given date', async () => {
             name: 'Manglre',
             roster:
                 expect.arrayContaining([{
-                    player_key: '402.p.4895',
                     name: 'Marcus Morris Sr.',
                     selected_position: 'BN',
                     team: 'LAC',
