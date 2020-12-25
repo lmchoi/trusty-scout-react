@@ -1,10 +1,13 @@
 import ScheduleService from './schedule-service.mjs'
 
+// TODO test daylight saving 30 March etc
+
 test('parse schedule', async () => {
     const dateToReport = new Date('2020-12-23');
     const scheduleService = new ScheduleService();
 
-    const schedule = await scheduleService.retrieveSchedule(dateToReport);
+    await scheduleService.refresh();
+    const schedule = scheduleService.retrieveSchedule(dateToReport);
 
     const scheduleOnDate = schedule.get(dateToReport.getTime());
     expect(scheduleOnDate.get('POR')).toEqual('UTA');

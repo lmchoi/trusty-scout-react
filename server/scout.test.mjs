@@ -96,18 +96,19 @@ test('generate scout report for a given date', async () => {
                 team: 'POR',
                 stats: {
                     'GP': 1,
-                    'MIN': [35.6],
-                    'FGP': [0.455],
-                    'FTP': [0.779],
-                    '3PM': [2.7],
-                    'PTS': [21.4],
-                    'REB': [4.1],
-                    'AST': [3.8],
-                    'STL': [0.8],
-                    'BLK': [0.5],
-                    'TO': [1.8]
+                    'MIN': 35.6,
+                    'FGP': 0.455,
+                    'FTP': 0.779,
+                    '3PM': 2.7,
+                    'PTS': 21.4,
+                    'REB': 4.1,
+                    'AST': 3.8,
+                    'STL': 0.8,
+                    'BLK': 0.5,
+                    'TO': 1.8
                 }
-            }])
+            }]),
+            // total: expect.anything()
         }, {
             name: 'Manglre',
             roster:
@@ -117,19 +118,20 @@ test('generate scout report for a given date', async () => {
                     team: 'LAC',
                     stats: {
                         'GP': 0,
-                        'MIN': [0],
-                        'FGP': [0],
-                        'FTP': [0],
-                        '3PM': [0],
-                        'PTS': [0],
-                        'REB': [0],
-                        'AST': [0],
-                        'STL': [0],
-                        'BLK': [0],
-                        'TO': [0]
+                        'MIN': 0,
+                        'FGP': 0,
+                        'FTP': 0,
+                        '3PM': 0,
+                        'PTS': 0,
+                        'REB': 0,
+                        'AST': 0,
+                        'STL': 0,
+                        'BLK': 0,
+                        'TO': 0
                     }
-                }])
+                }]),
+            // total: expect.anything()
         }]
     };
-    expect(scoutReport).toMatchObject(expectedReport)
+    expect(scoutReport[0]).toMatchObject(expectedReport);
 });

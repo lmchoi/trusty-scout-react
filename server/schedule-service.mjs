@@ -17,20 +17,25 @@ function parseScheduleGame(game) {
 }
 
 export default class ScheduleService {
-    async retrieveSchedule(dateToReport) {
+    async refresh() {
         const fsPromises = fs.promises;
         const scheduleXml = await fsPromises.readFile('resources/schedule.xml');
 
+        this.scheduleFile = parser.parse(scheduleXml.toString())
+            .FantasyBasketballNerd.Game
+            .map(game => parseScheduleGame(game));
+    }
+
+    retrieveSchedule(dateToReport) {
         const schedule = new Map();
         const matchupsOnTheDay = new Map();
-        parser.parse(scheduleXml.toString())
-            .FantasyBasketballNerd.Game
-            .map(game => parseScheduleGame(game))
-            .filter(game => sameDate(game.date, dateToReport))
+
+        this.scheduleFile.filter(game => sameDate(game.date, dateToReport))
             .forEach(game => {
                 matchupsOnTheDay.set(game.home, game.away);
                 matchupsOnTheDay.set(game.away, game.home);
             });
+
         schedule.set(dateToReport.getTime(), matchupsOnTheDay);
 
         return schedule;

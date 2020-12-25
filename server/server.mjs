@@ -54,7 +54,8 @@ createOAuthClient().then(client => {
 
   app.get('/matchup', (req, res) => {
     const scout = new Scout();
-    scout.report(req.user, req.query.week).then(r => res.send(r));
+    // TODO write test week is a number with === 
+    scout.report(req.user, Number(req.query.week)).then(r => res.send(r));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {
