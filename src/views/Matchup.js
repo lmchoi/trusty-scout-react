@@ -1,5 +1,10 @@
 import React, { useEffect, useState } from 'react'
 
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+
 // TODO configurable days to report
 function calculateCateTotal(report, teamId, stat, days = report.length) {
   let total = 0;
@@ -50,11 +55,12 @@ const StatsTable = (prop) => {
 
 const Home = () => {
   const [matchupStats, setMatchupStats] = useState(null);
+  const [week, setWeek] = React.useState(1);
+  const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(null);
 
   useEffect(() => {
     (async () => {
-      const url = 'https://localhost:8080/matchup?week=1';
-
+      const url = `https://localhost:8080/matchup?week=${week}`;
       const response = await fetch(url, {
         credentials: 'include'
       });
@@ -68,7 +74,7 @@ const Home = () => {
         teamStats2: categories.map(stat => calculateCateTotal(report, 1, stat))
       });
     })();
-  }, []);
+  }, [week]);
 
   // TODO 
   // total
@@ -83,6 +89,20 @@ const Home = () => {
         Matchup
       </header>
 
+      <FormControl >
+        <InputLabel id="demo-simple-select-label">Week</InputLabel>
+        <Select
+          labelId="demo-simple-select-label"
+          id="demo-simple-select"
+          value={week}
+          onChange={(e) => setWeek(e.target.value)}
+        >
+          <MenuItem value={1}>1</MenuItem>
+          <MenuItem value={2}>2</MenuItem>
+          <MenuItem value={3}>3</MenuItem>
+        </Select>
+      </FormControl>
+
       <StatsTable stats={matchupStats} />
       <p>
         <a href="https://localhost:8080/auth/yahoo/logout">Logout</a>
@@ -92,5 +112,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
