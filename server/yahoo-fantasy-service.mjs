@@ -5,7 +5,8 @@ const dodgyTeamAbbr = {
     'GS': 'GSW',
     'NO': 'NOP',
     'NY': 'NYK',
-    'SA': 'SAS'
+    'SA': 'SAS',
+    'PHO': 'PHX'
 };
 
 export default class YahooFantasyService {

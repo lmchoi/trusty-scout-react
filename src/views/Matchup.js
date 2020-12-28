@@ -56,7 +56,6 @@ const Home = () => {
   const [report, setReport] = useState(null);
   const [week, setWeek] = React.useState(2);
   useEffect(() => {
-    console.log('call api');
     (async () => {
       const url = `https://localhost:8080/matchup?week=${week}`;
       const response = await fetch(url, {
@@ -70,9 +69,9 @@ const Home = () => {
   const [matchupStats, setMatchupStats] = useState(null);
   const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(1);
   useEffect(() => {
-    console.log('set matchup stats');
     (() => {
       if (report != null) {
+        console.log(report);
         const categories = Object.keys(report[0].matchup[0].total);
 
         setMatchupStats({
