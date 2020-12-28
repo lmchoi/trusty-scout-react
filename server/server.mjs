@@ -59,9 +59,14 @@ createOAuthClient().then(client => {
     scout.report(req.user, Number(req.query.week)).then(r => res.send(r));
   });
 
-  app.get('/retrievestats', (req, res) => {
+  app.get('/fetchstats', (req, res) => {
     const fetcher = new StatsFetcher();
     fetcher.fetch().then(s => res.send(s));
+  });
+
+  app.get('/fetchgamestats', (req, res) => {
+    const fetcher = new StatsFetcher();
+    fetcher.fetchGameStats(req.query.gameId).then(s => res.send(s));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {

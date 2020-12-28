@@ -27,40 +27,51 @@ export default class StatsFetcher {
         }
 
         const statsDate = nextDay(new Date(gameStatsDoc.lastUpdated));
+
         const statsDateString = statsDate.toLocaleDateString('en-CA');
         const gamesResponse = await got(`https://uk.global.nba.com/stats2/scores/gamedaystatus.json?gameDate=${statsDateString}`).json();
 
-        const gamesFetched = [];
-        gamesResponse.payload.gameDates[0].games.forEach((game) => {
-            if (game.status === '3') {
-                const gameId = game.gameId;
-                const response = got(`https://uk.global.nba.com/stats2/game/snapshot.json?gameId=${gameId}`).json();
+        let gamesFetched = [];
 
-                try {
-                    db.put({
-                        "_id": gameId,
-                        "stats": response
-                    });
+        await (async () => {
+            for (const game of gamesResponse.payload.gameDates[0].games) {
+                if (game.status === '3') {
+                    const gameId = game.gameId;
 
-                    gamesFetched.push({
-                        date: statsDate,
-                        id: gameId
-                    });
-                } catch (e) {
-                    if (e.status !== 409) {
-                        console.log(e);
-                        throw e;
+                    const response = await got(`https://uk.global.nba.com/stats2/game/snapshot.json?gameId=${gameId}`).json();
+
+                    try {
+                        await db.put({
+                            "_id": gameId,
+                            "stats": response
+                        });
+
+                        gamesFetched.push({
+                            date: statsDate,
+                            id: gameId
+                        });
+
+
+                    } catch (e) {
+                        if (e.status !== 409) {
+                            throw e;
+                        }
                     }
                 }
             }
-        });
 
-        if (gamesFetched.length > 0 || gamesResponse.payload.gameDates[0].games.length === 0) {
-            gameStatsDoc.lastUpdated = statsDate;
-            gameStatsDoc.games = gameStatsDoc.games.concat(gamesFetched);
-            db.put(gameStatsDoc);
-        }
+            console.log(gamesFetched.length + " game(s) fetched");
+            if (gamesFetched.length > 0 || gamesResponse.payload.gameDates[0].games.length === 0) {
+                gameStatsDoc.lastUpdated = statsDate;
+                gameStatsDoc.games = gameStatsDoc.games.concat(gamesFetched);
+                await db.put(gameStatsDoc);
+            }
+        })();
 
         return gameStatsDoc;
+    }
+
+    async fetchGameStats(gameId) {
+        return await db.get(gameId);
     }
 }
