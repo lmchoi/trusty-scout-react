@@ -149,8 +149,8 @@ export default class Scout {
     }
 
     async report(user, week) {
-        console.log(user.token);
-        
+        console.log('report for week ' + week);
+
         // TODO load projections once at startup
         // once only for now until there is projections based on date
         const projections = await this.ProjectionService.retrieveProjections();

@@ -40,7 +40,6 @@ export default class YahooFantasyService {
     }
 
     async retrieveMatchup(user, weekNum) {
-        console.log(user.token);
         const response = await got(`https://fantasysports.yahooapis.com/fantasy/v2/users;use_login=1/teams/matchups;weeks=${weekNum}`, {
             headers: {
                 Authorization: `Bearer ${user.token}`

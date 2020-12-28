@@ -5,7 +5,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
-// TODO configurable days to report
 function calculateCateTotal(report, teamId, stat, days = report.length) {
   let total = 0;
   let n = days < report.length ? days : report.length;
@@ -54,27 +53,36 @@ const StatsTable = (prop) => {
 }
 
 const Home = () => {
-  const [matchupStats, setMatchupStats] = useState(null);
-  const [week, setWeek] = React.useState(1);
-  const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(1);
-
+  const [report, setReport] = useState(null);
+  const [week, setWeek] = React.useState(2);
   useEffect(() => {
+    console.log('call api');
     (async () => {
       const url = `https://localhost:8080/matchup?week=${week}`;
       const response = await fetch(url, {
         credentials: 'include'
       });
 
-      const report = await response.json();
-      const categories = Object.keys(report[0].matchup[0].total);
-
-      setMatchupStats({
-        categories: categories,
-        teamStats1: categories.map(stat => calculateCateTotal(report, 0, stat, daysSinceStartOfWeek)),
-        teamStats2: categories.map(stat => calculateCateTotal(report, 1, stat, daysSinceStartOfWeek))
-      });
+      setReport(await response.json());
     })();
-  }, [week, daysSinceStartOfWeek]);
+  }, [week]);
+
+  const [matchupStats, setMatchupStats] = useState(null);
+  const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(1);
+  useEffect(() => {
+    console.log('set matchup stats');
+    (() => {
+      if (report != null) {
+        const categories = Object.keys(report[0].matchup[0].total);
+
+        setMatchupStats({
+          categories: categories,
+          teamStats1: categories.map(stat => calculateCateTotal(report, 0, stat, daysSinceStartOfWeek)),
+          teamStats2: categories.map(stat => calculateCateTotal(report, 1, stat, daysSinceStartOfWeek))
+        });
+      }
+    })();
+  }, [report, daysSinceStartOfWeek]);
 
   return (
     <div>
