@@ -7,6 +7,7 @@ import { Strategy } from 'openid-client';
 import expressSesssion from 'express-session';
 import passport from 'passport';
 import Scout from './scout.mjs';
+import StatsFetcher from './stats-fetcher.mjs';
 
 const options = {
   key: readFileSync('key.pem'),
@@ -56,6 +57,11 @@ createOAuthClient().then(client => {
     const scout = new Scout();
     // TODO write test week is a number with === 
     scout.report(req.user, Number(req.query.week)).then(r => res.send(r));
+  });
+
+  app.get('/retrievestats', (req, res) => {
+    const fetcher = new StatsFetcher();
+    fetcher.fetch().then(s => res.send(s));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {
