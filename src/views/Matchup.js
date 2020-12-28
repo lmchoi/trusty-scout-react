@@ -56,7 +56,7 @@ const StatsTable = (prop) => {
 const Home = () => {
   const [matchupStats, setMatchupStats] = useState(null);
   const [week, setWeek] = React.useState(1);
-  const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(null);
+  const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(1);
 
   useEffect(() => {
     (async () => {
@@ -70,18 +70,11 @@ const Home = () => {
 
       setMatchupStats({
         categories: categories,
-        teamStats1: categories.map(stat => calculateCateTotal(report, 0, stat)),
-        teamStats2: categories.map(stat => calculateCateTotal(report, 1, stat))
+        teamStats1: categories.map(stat => calculateCateTotal(report, 0, stat, daysSinceStartOfWeek)),
+        teamStats2: categories.map(stat => calculateCateTotal(report, 1, stat, daysSinceStartOfWeek))
       });
     })();
-  }, [week]);
-
-  // TODO 
-  // total
-  // one day only
-  // since start of week
-  // actual data
-  // by player
+  }, [week, daysSinceStartOfWeek]);
 
   return (
     <div>
@@ -90,16 +83,37 @@ const Home = () => {
       </header>
 
       <FormControl >
-        <InputLabel id="demo-simple-select-label">Week</InputLabel>
+        <InputLabel id="week-select-label">Week</InputLabel>
         <Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
+          labelId="week-select-label"
+          id="week-select"
           value={week}
           onChange={(e) => setWeek(e.target.value)}
         >
           <MenuItem value={1}>1</MenuItem>
           <MenuItem value={2}>2</MenuItem>
           <MenuItem value={3}>3</MenuItem>
+          <MenuItem value={4}>4</MenuItem>
+          <MenuItem value={5}>5</MenuItem>
+        </Select>
+      </FormControl>
+
+      <FormControl >
+        <InputLabel id="day-select-label">Days</InputLabel>
+        <Select
+          labelId="day-select-label"
+          id="day-select"
+          value={daysSinceStartOfWeek}
+          defaultValue={1}
+          onChange={(e) => setDaysSinceStartOfWeek(e.target.value)}
+        >
+          <MenuItem value={1}>1</MenuItem>
+          <MenuItem value={2}>2</MenuItem>
+          <MenuItem value={3}>3</MenuItem>
+          <MenuItem value={4}>4</MenuItem>
+          <MenuItem value={5}>5</MenuItem>
+          <MenuItem value={6}>6</MenuItem>
+          <MenuItem value={7}>7</MenuItem>
         </Select>
       </FormControl>
 
