@@ -84,7 +84,7 @@ test('generate scout report for a given date', async () => {
     const mockRetrieveSchedule = jest.fn();
     ScheduleService.prototype.retrieveSchedule = mockRetrieveSchedule;
     mockRetrieveSchedule.mockReturnValue(Promise.resolve(scheduleRetrieved));
-    
+
     const scoutReport = await scout.report(user, 1);
     const expectedReport = {
         date: dateToReport,
@@ -95,42 +95,56 @@ test('generate scout report for a given date', async () => {
                 selected_position: 'PG',
                 team: 'POR',
                 stats: {
-                    'GP': 1,
-                    'MIN': 35.6,
-                    'FGP': 0.455,
-                    'FTP': 0.779,
-                    '3PM': 2.7,
-                    'PTS': 21.4,
-                    'REB': 4.1,
-                    'AST': 3.8,
-                    'STL': 0.8,
-                    'BLK': 0.5,
-                    'TO': 1.8
+                    projected: {
+                        'GP': 1,
+                        'MIN': 35.6,
+                        'FGP': 0.455,
+                        'FTP': 0.779,
+                        '3PM': 2.7,
+                        'PTS': 21.4,
+                        'REB': 4.1,
+                        'AST': 3.8,
+                        'STL': 0.8,
+                        'BLK': 0.5,
+                        'TO': 1.8
+                    }
                 }
             }]),
-            // total: expect.anything()
+            teamTotal: {
+                projected: expect.objectContaining({
+                    'GP': 1
+                })
+            }
         }, {
             name: 'Manglre',
             roster:
-                expect.arrayContaining([{
-                    name: 'Marcus Morris Sr.',
-                    selected_position: 'BN',
-                    team: 'LAC',
-                    stats: {
-                        'GP': 0,
-                        'MIN': 0,
-                        'FGP': 0,
-                        'FTP': 0,
-                        '3PM': 0,
-                        'PTS': 0,
-                        'REB': 0,
-                        'AST': 0,
-                        'STL': 0,
-                        'BLK': 0,
-                        'TO': 0
-                    }
-                }]),
-            // total: expect.anything()
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        stats: {
+                            projected: expect.objectContaining(
+                                {
+                                    'GP': 0,
+                                    'PTS': 0
+                                })
+                        }
+                    }),
+                    expect.objectContaining({
+                        stats: {
+                            projected: expect.objectContaining(
+                                {
+                                    'GP': 1,
+                                    'PTS': 11.9
+                                })
+                        }
+                    })
+                ]),
+            teamTotal: {
+                projected: expect.objectContaining({
+                    'GP': 1,
+                    'PTS': 11.9
+
+                })
+            }
         }]
     };
     expect(scoutReport[0]).toMatchObject(expectedReport);

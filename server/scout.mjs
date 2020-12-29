@@ -7,7 +7,7 @@ const SEASON_START_DATE = new Date('2020-12-22');
 // TODO daylight saving
 function getStartOfWeek(week) {
     const copy = new Date(SEASON_START_DATE.valueOf());
-    
+
     if (week === 1) {
         return copy;
     }
@@ -65,6 +65,68 @@ export default class Scout {
         return (!['BN', 'IL'].includes(player.selected_position)) && schedule.get(player.team) != null;
     }
 
+    createPlayerDailyModel(player) {
+        return {
+            name: player.name,
+            selected_position: player.selected_position,
+            team: player.team,
+            stats: {
+                projectedPgAvg: {
+                    'GP': 0,
+                    'MIN': 0,
+                    'FGP': 0,
+                    'FTP': 0,
+                    '3PM': 0,
+                    'PTS': 0,
+                    'REB': 0,
+                    'AST': 0,
+                    'STL': 0,
+                    'BLK': 0,
+                    'TO': 0
+                },
+                last5GamesPgAvg: {
+                    'GP': 0,
+                    'MIN': 0,
+                    'FGP': 0,
+                    'FTP': 0,
+                    '3PM': 0,
+                    'PTS': 0,
+                    'REB': 0,
+                    'AST': 0,
+                    'STL': 0,
+                    'BLK': 0,
+                    'TO': 0
+                },
+                lastSeasonPgAvg: {
+                    'GP': 0,
+                    'MIN': 0,
+                    'FGP': 0,
+                    'FTP': 0,
+                    '3PM': 0,
+                    'PTS': 0,
+                    'REB': 0,
+                    'AST': 0,
+                    'STL': 0,
+                    'BLK': 0,
+                    'TO': 0
+                },
+                currentSeasonPgAvg: {
+                    'GP': 0,
+                    'MIN': 0,
+                    'FGP': 0,
+                    'FTP': 0,
+                    '3PM': 0,
+                    'PTS': 0,
+                    'REB': 0,
+                    'AST': 0,
+                    'STL': 0,
+                    'BLK': 0,
+                    'TO': 0
+                }
+            }
+        }
+    }
+
     generatePlayerStats(player, schedule, projections) {
         let stats = {
             'GP': 0,
@@ -92,12 +154,16 @@ export default class Scout {
             name: player.name,
             selected_position: player.selected_position,
             team: player.team,
-            stats: stats
+            stats: {
+                projected: stats
+            }
         }
     }
 
     generateTeamStats(team, schedule, projections) {
+        team.roster.map(player => (this.createPlayerDailyModel(player)))
         const playerStats = team.roster.map(player => (this.generatePlayerStats(player, schedule, projections)));
+
         let totalStats = {
             'GP': 0,
             'MIN': 0,
@@ -114,7 +180,7 @@ export default class Scout {
 
         playerStats.forEach(player => {
             // TODO need raw stats for FGs - cant count on sum of avgs!
-            const ps = player.stats;
+            const ps = player.stats.projected;
             totalStats['GP'] += ps['GP'];
             totalStats['MIN'] += ps['MIN'];
             totalStats['FGP'] += ps['FGP'];
@@ -131,7 +197,9 @@ export default class Scout {
         return {
             name: team.name,
             roster: playerStats,
-            total: totalStats
+            teamTotal: {
+                projected: totalStats
+            }
         }
     }
 

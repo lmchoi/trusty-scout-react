@@ -10,7 +10,7 @@ function calculateCateTotal(report, teamId, stat, days = report.length) {
   let n = days < report.length ? days : report.length;
   for (let i = 0; i < n; i++) {
     let day = report[i];
-    total += day.matchup[teamId].total[stat];
+    total += day.matchup[teamId].teamTotal.projected[stat];
   }
   return total;
 }
@@ -72,7 +72,7 @@ const Home = () => {
     (() => {
       if (report != null) {
         console.log(report);
-        const categories = Object.keys(report[0].matchup[0].total);
+        const categories = Object.keys(report[0].matchup[0].teamTotal.projected);
 
         setMatchupStats({
           categories: categories,
