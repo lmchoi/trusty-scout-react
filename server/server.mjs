@@ -64,9 +64,14 @@ createOAuthClient().then(client => {
     fetcher.fetch().then(s => res.send(s));
   });
 
-  app.get('/fetchgamestats', (req, res) => {
+  app.get('/gamestats', (req, res) => {
     const fetcher = new StatsFetcher();
     fetcher.fetchGameStats(req.query.gameId).then(s => res.send(s));
+  });
+
+  app.get('/playerstats', (req, res) => {
+    const fetcher = new StatsFetcher();
+    fetcher.fetchPlayerStats(req.query.playerName).then(s => res.send(s));
   });
 
   app.get('/auth/yahoo', (req, res, next) => {

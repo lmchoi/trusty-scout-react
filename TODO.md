@@ -6,12 +6,14 @@ TODO
 * I want to know which player to add/drop
 
 
+SPEED
+store stats by player
+
 
 by player - list player
 past 5 games
 last season
 
- 
 USE BY OTHER TEAMS
 projected FGs FTs %
 show team name
