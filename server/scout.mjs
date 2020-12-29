@@ -30,7 +30,7 @@ export default class Scout {
         this.ProjectionService = new ProjectionService();
     }
 
-    statsHasGame(stats, playerStats) {
+    setPlayerGameStats(stats, playerStats) {
         stats['GP'] = 1;
         stats['MIN'] = playerStats['MIN'];
         stats['FGP'] = playerStats['FGP'];
@@ -42,19 +42,6 @@ export default class Scout {
         stats['STL'] = playerStats['STL'];
         stats['BLK'] = playerStats['BLK'];
         stats['TO'] = playerStats['TO'];
-    }
-
-    statsNoGame(stats) {
-        stats['MIN'] = 0;
-        stats['FGP'] = 0;
-        stats['FTP'] = 0;
-        stats['3PM'] = 0;
-        stats['PTS'] = 0;
-        stats['REB'] = 0;
-        stats['AST'] = 0;
-        stats['STL'] = 0;
-        stats['BLK'] = 0;
-        stats['TO'] = 0;
     }
 
     isPlayerPlaying(schedule, player) {
@@ -71,7 +58,7 @@ export default class Scout {
             selected_position: player.selected_position,
             team: player.team,
             stats: {
-                projectedPgAvg: {
+                projected: {
                     'GP': 0,
                     'MIN': 0,
                     'FGP': 0,
@@ -84,86 +71,38 @@ export default class Scout {
                     'BLK': 0,
                     'TO': 0
                 },
-                last5GamesPgAvg: {
-                    'GP': 0,
-                    'MIN': 0,
-                    'FGP': 0,
-                    'FTP': 0,
-                    '3PM': 0,
-                    'PTS': 0,
-                    'REB': 0,
-                    'AST': 0,
-                    'STL': 0,
-                    'BLK': 0,
-                    'TO': 0
-                },
-                lastSeasonPgAvg: {
-                    'GP': 0,
-                    'MIN': 0,
-                    'FGP': 0,
-                    'FTP': 0,
-                    '3PM': 0,
-                    'PTS': 0,
-                    'REB': 0,
-                    'AST': 0,
-                    'STL': 0,
-                    'BLK': 0,
-                    'TO': 0
-                },
-                currentSeasonPgAvg: {
-                    'GP': 0,
-                    'MIN': 0,
-                    'FGP': 0,
-                    'FTP': 0,
-                    '3PM': 0,
-                    'PTS': 0,
-                    'REB': 0,
-                    'AST': 0,
-                    'STL': 0,
-                    'BLK': 0,
-                    'TO': 0
-                }
+                // actual: {
+                //     'GP': 0,
+                //     'MIN': 0,
+                //     'FGP': 0,
+                //     'FTP': 0,
+                //     '3PM': 0,
+                //     'PTS': 0,
+                //     'REB': 0,
+                //     'AST': 0,
+                //     'STL': 0,
+                //     'BLK': 0,
+                //     'TO': 0
+                // }
+                // // last5GamesPgAvg: {
+                // // },
+                // // lastSeasonPgAvg: {
+                // // },
+                // // currentSeasonPgAvg: {
+                // // }
             }
         }
     }
 
-    generatePlayerStats(player, schedule, projections) {
-        let stats = {
-            'GP': 0,
-            'MIN': 0,
-            'FGP': 0,
-            'FTP': 0,
-            '3PM': 0,
-            'PTS': 0,
-            'REB': 0,
-            'AST': 0,
-            'STL': 0,
-            'BLK': 0,
-            'TO': 0
-        }
-
+    calculateProjectedPlayerStats(player, schedule, projections) {
         if (this.isPlayerPlaying(schedule, player)) {
             const playerStats = projections[player.name];
             // TODO check if projections is found
-            this.statsHasGame(stats, playerStats);
-        } else {
-            this.statsNoGame(stats);
-        }
-
-        return {
-            name: player.name,
-            selected_position: player.selected_position,
-            team: player.team,
-            stats: {
-                projected: stats
-            }
+            this.setPlayerGameStats(player.stats.projected, playerStats);
         }
     }
 
-    generateTeamStats(team, schedule, projections) {
-        team.roster.map(player => (this.createPlayerDailyModel(player)))
-        const playerStats = team.roster.map(player => (this.generatePlayerStats(player, schedule, projections)));
-
+    calculateProjectedTeamTotal(playerStats) {
         let totalStats = {
             'GP': 0,
             'MIN': 0,
@@ -194,11 +133,18 @@ export default class Scout {
             totalStats['TO'] += ps['TO'];
         });
 
+        return totalStats;
+    }
+
+    generateTeamStats(team, schedule, projections) {
+        let playerStats = team.roster.map(player => this.createPlayerDailyModel(player));
+        playerStats.forEach(player => this.calculateProjectedPlayerStats(player, schedule, projections));
+
         return {
             name: team.name,
             roster: playerStats,
             teamTotal: {
-                projected: totalStats
+                projected: this.calculateProjectedTeamTotal(playerStats)
             }
         }
     }

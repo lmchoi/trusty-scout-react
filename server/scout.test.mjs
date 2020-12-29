@@ -61,7 +61,6 @@ test('generate scout report for a given date', async () => {
         }]
     };
 
-
     const mockRetrieveMatchup = jest.fn();
     YahooFantasyService.prototype.retrieveMatchup = mockRetrieveMatchup;
     mockRetrieveMatchup.mockReturnValue(Promise.resolve(matchupRetrieved));
