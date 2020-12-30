@@ -1,5 +1,6 @@
 import parser from 'fast-xml-parser';
 import fs from 'fs';
+import {stringToDate} from './fancy-date.mjs'
 
 function sameDate(date1, date2) {
     return date1.getUTCFullYear() === date2.getUTCFullYear() &&
@@ -8,9 +9,10 @@ function sameDate(date1, date2) {
 }
 
 function parseScheduleGame(game) {
+    // game.gameDate is in format of 2020-12-22 19:00:00 (EST - no timezone specified)
     return {
         week: game.week,
-        date: new Date(game.gameDate),
+        date: stringToDate(game.gameDate),
         home: game.home,
         away: game.away
     }

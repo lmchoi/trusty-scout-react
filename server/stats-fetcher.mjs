@@ -1,6 +1,7 @@
 import PouchDB from 'pouchdb';
 import got from 'got';
-import { raw } from 'express';
+import {utcMsToEstDate} from './fancy-date.mjs'
+
 const db = new PouchDB('scoutdb');
 
 // TODO extract to date class
@@ -12,7 +13,7 @@ function nextDay(day) {
 
 export default class StatsFetcher {
     async addPlayerGameStats(gameSnapshotResponse) {
-        const gameTime = gameSnapshotResponse.payload.gameProfile.utcMillis
+        const gameTime = utcMsToEstDate(Number(gameSnapshotResponse.payload.gameProfile.utcMillis))
         await (async () => {
             await this.addPlayerStats(gameSnapshotResponse.payload.homeTeam.gamePlayers, gameTime);
             await this.addPlayerStats(gameSnapshotResponse.payload.awayTeam.gamePlayers, gameTime);
@@ -22,7 +23,7 @@ export default class StatsFetcher {
     async addPlayerStats(playersFromTeam, gameTime) {
         for (const retrievedPlayerData of playersFromTeam) {
             const playerObj = await this.getPlayer(retrievedPlayerData.profile.code);
-            playerObj.gameStats[Number(gameTime)] = retrievedPlayerData.statTotal;
+            playerObj.gameStats[gameTime.valueOf()] = retrievedPlayerData.statTotal;
             await db.put(playerObj);
         }
     }
