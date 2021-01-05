@@ -1,7 +1,9 @@
 import YahooFantasyService from './yahoo-fantasy-service.mjs'
 import ScheduleService from './schedule-service.mjs'
 import ProjectionService from './projection-service.mjs'
+import StatsService from './stats-service.mjs'
 
+// TODO what timezone is this?
 const SEASON_START_DATE = new Date('2020-12-22');
 
 // TODO daylight saving
@@ -28,6 +30,7 @@ export default class Scout {
         this.fantasyService = new YahooFantasyService();
         this.scheduleService = new ScheduleService();
         this.ProjectionService = new ProjectionService();
+        this.statsService = new StatsService();
     }
 
     setPlayerGameStats(stats, playerStats) {
@@ -71,19 +74,19 @@ export default class Scout {
                     'BLK': 0,
                     'TO': 0
                 },
-                // actual: {
-                //     'GP': 0,
-                //     'MIN': 0,
-                //     'FGP': 0,
-                //     'FTP': 0,
-                //     '3PM': 0,
-                //     'PTS': 0,
-                //     'REB': 0,
-                //     'AST': 0,
-                //     'STL': 0,
-                //     'BLK': 0,
-                //     'TO': 0
-                // }
+                actual: {
+                    'GP': 0,
+                    'MIN': 0,
+                    'FGP': 0,
+                    'FTP': 0,
+                    '3PM': 0,
+                    'PTS': 0,
+                    'REB': 0,
+                    'AST': 0,
+                    'STL': 0,
+                    'BLK': 0,
+                    'TO': 0
+                }
                 // // last5GamesPgAvg: {
                 // // },
                 // // lastSeasonPgAvg: {
@@ -100,6 +103,15 @@ export default class Scout {
             // TODO check if projections is found
             this.setPlayerGameStats(player.stats.projected, playerStats);
         }
+    }
+
+    retrievePlayerGameStats(dateToReport, player) {
+        (async () => {
+            const playerStats = await this.statsService.retrieveStats(dateToReport, player.name);
+            if (playerStats != null) {
+                this.setPlayerGameStats(player.stats.actual, playerStats);
+            }
+        })();
     }
 
     calculateProjectedTeamTotal(playerStats) {
@@ -136,9 +148,12 @@ export default class Scout {
         return totalStats;
     }
 
-    generateTeamStats(team, schedule, projections) {
+    generateTeamStats(dateToReport, team, schedule, projections) {
         let playerStats = team.roster.map(player => this.createPlayerDailyModel(player));
-        playerStats.forEach(player => this.calculateProjectedPlayerStats(player, schedule, projections));
+        playerStats.forEach(player => {
+            this.calculateProjectedPlayerStats(player, schedule, projections);
+            this.retrievePlayerGameStats(dateToReport, player);
+        });
 
         return {
             name: team.name,
@@ -149,16 +164,16 @@ export default class Scout {
         }
     }
 
-    generateMatchupStats(teams, schedule, projections) {
-        return teams.map(team => this.generateTeamStats(team, schedule, projections))
+    generateMatchupStats(dateToReport, teams, schedule, projections) {
+        return teams.map(team => this.generateTeamStats(dateToReport, team, schedule, projections))
     }
 
-    generateDayReport(date, roster, schedule, projections) {
-        const scheduleForTheDay = schedule.get(date.getTime());
+    generateDayReport(dateToReport, roster, schedule, projections) {
+        const scheduleForTheDay = schedule.get(dateToReport.getTime());
         return {
-            date: date,
+            date: dateToReport,
             // TODO should probably move the logic to get schedule for a particular day to the schedule service
-            matchup: this.generateMatchupStats(roster.matchup, scheduleForTheDay, projections)
+            matchup: this.generateMatchupStats(dateToReport, roster.matchup, scheduleForTheDay, projections)
         };
     }
 
@@ -183,8 +198,8 @@ export default class Scout {
         while (dateToReport.valueOf() < nextWeek.valueOf()) {
             const roster = await this.fantasyService.retrieveRoster(user, dateToReport, team1, team2);
 
-            // for each day, find the roster
             const schedule = await this.scheduleService.retrieveSchedule(dateToReport);
+
             report.push(this.generateDayReport(dateToReport, roster, schedule, projections));
 
             dateToReport = nextDay(dateToReport);

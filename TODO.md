@@ -5,6 +5,11 @@ TODO
 * I want to know which player is doing better than expected
 * I want to know which player to add/drop
 
+FIX
+Consider fetching schedule from nba.com instead of XML
+
+how to allow for updates to stats/schedules after already fetched?
+
 
 SPEED
 store stats by player
@@ -24,4 +29,16 @@ find total number of weeks
 default to current week
   
 CS
+schedule.xml is not in UTC
 date library, fix timezone bug
+
+Stat service - need to convert full name to player code correctly
+// Karl-Anthony Towns -> karl-anthony_towns
+// T.J. Warren (t.j._warren) -> tj_warren
+// Marcus Morris Sr. (marcus_morris sr.) -> marcus_morris
+
+// injured players
+// Klay Thompson (klay_thompson)
+// Kristaps Porzingis (kristaps_porzingis)
+
+// TODO find all names from yahoo, projections, nba.com

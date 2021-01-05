@@ -38,6 +38,11 @@ const transformOptions = {
 export default class ProjectionService {
     async retrieveProjections() {
         const playerProjs = await csvtojson(transformOptions).fromFile('resources/fantasypros-ros-avg-projections.csv');
-            return Object.assign({}, ...playerProjs.map(p => ({ [p.name]: p })));
+        playerProjs.map(p => {
+            p.FGP = p.FGP * 100;
+            p.FTP = p.FTP * 100;
+            return p;
+        });
+        return Object.assign({}, ...playerProjs.map(p => ({ [p.name]: p })));
     }
 }

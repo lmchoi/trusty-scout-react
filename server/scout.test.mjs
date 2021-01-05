@@ -1,5 +1,6 @@
 import YahooFantasyService from './yahoo-fantasy-service.mjs';
 import ScheduleService from './schedule-service.mjs';
+import StatsService from './stats-service.mjs';
 import Scout from './scout.mjs'
 import { jest } from '@jest/globals'
 
@@ -10,6 +11,116 @@ test('generate scout report for a given date', async () => {
         token: ''
     };
 
+    mockMatchupService();
+    mockRosterService();
+    mockScheduleService(dateToReport);
+    mockStatsService();
+
+    const scoutReport = await scout.report(user, 1);
+    const expectedReport = {
+        date: dateToReport,
+        matchup: [{
+            name: 'LA Kardashians',
+            roster: expect.arrayContaining([{
+                name: 'CJ McCollum',
+                selected_position: 'PG',
+                team: 'POR',
+                stats: {
+                    projected: {
+                        'GP': 1,
+                        'MIN': 35.6,
+                        'FGP': 45.5,
+                        'FTP': 77.9,
+                        '3PM': 2.7,
+                        'PTS': 21.4,
+                        'REB': 4.1,
+                        'AST': 3.8,
+                        'STL': 0.8,
+                        'BLK': 0.5,
+                        'TO': 1.8
+                    },
+                    actual: {
+                        'GP': 1,
+                        'MIN': 25.6,
+                        'FGP': 35.5,
+                        'FTP': 67.9,
+                        '3PM': 1.5,
+                        'PTS': 20.4,
+                        'REB': 3.1,
+                        'AST': 2.8,
+                        'STL': 1.8,
+                        'BLK': 1.5,
+                        'TO': 2.8
+                    }
+                }
+            }]),
+            teamTotal: {
+                projected: expect.objectContaining({
+                    'GP': 1
+                })
+            }
+        }, {
+            name: 'Manglre',
+            roster:
+                expect.arrayContaining([
+                    expect.objectContaining({
+                        stats: {
+                            projected: expect.objectContaining(
+                                {
+                                    'GP': 0,
+                                    'PTS': 0
+                                }),
+                            actual: {
+                                'GP': 0,
+                                'MIN': 0,
+                                'FGP': 0,
+                                'FTP': 0,
+                                '3PM': 0,
+                                'PTS': 0,
+                                'REB': 0,
+                                'AST': 0,
+                                'STL': 0,
+                                'BLK': 0,
+                                'TO': 0
+                            }
+                        }
+                    }),
+                    expect.objectContaining({
+                        stats: {
+                            projected: expect.objectContaining(
+                                {
+                                    'GP': 1,
+                                    'PTS': 11.9
+                                }),
+                            actual: {
+                                'GP': 0,
+                                'MIN': 0,
+                                'FGP': 0,
+                                'FTP': 0,
+                                '3PM': 0,
+                                'PTS': 0,
+                                'REB': 0,
+                                'AST': 0,
+                                'STL': 0,
+                                'BLK': 0,
+                                'TO': 0
+                            }
+                        }
+                    })
+                ]),
+            teamTotal: {
+                projected: expect.objectContaining({
+                    'GP': 1,
+                    'PTS': 11.9
+
+                })
+            }
+        }]
+    };
+    expect(scoutReport[0]).toMatchObject(expectedReport);
+});
+
+function mockMatchupService() {
     const matchupRetrieved = {
         matchup: [{
             name: 'LA Kardashians',
@@ -22,6 +133,12 @@ test('generate scout report for a given date', async () => {
         }]
     };
 
+    const mockRetrieveMatchup = jest.fn();
+    YahooFantasyService.prototype.retrieveMatchup = mockRetrieveMatchup;
+    mockRetrieveMatchup.mockReturnValue(Promise.resolve(matchupRetrieved));
+}
+
+function mockRosterService() {
     const rosterRetrieved = {
         matchup: [{
             name: 'LA Kardashians',
@@ -61,14 +178,12 @@ test('generate scout report for a given date', async () => {
         }]
     };
 
-    const mockRetrieveMatchup = jest.fn();
-    YahooFantasyService.prototype.retrieveMatchup = mockRetrieveMatchup;
-    mockRetrieveMatchup.mockReturnValue(Promise.resolve(matchupRetrieved));
-
     const mockRetrieveRoster = jest.fn();
     YahooFantasyService.prototype.retrieveRoster = mockRetrieveRoster;
     mockRetrieveRoster.mockReturnValue(Promise.resolve(rosterRetrieved));
+}
 
+function mockScheduleService(dateToReport) {
     const matchupsOnTheDay = new Map([
         ['POR', 'UTA'],
         ['UTA', 'POR'],
@@ -83,68 +198,28 @@ test('generate scout report for a given date', async () => {
     const mockRetrieveSchedule = jest.fn();
     ScheduleService.prototype.retrieveSchedule = mockRetrieveSchedule;
     mockRetrieveSchedule.mockReturnValue(Promise.resolve(scheduleRetrieved));
+}
 
-    const scoutReport = await scout.report(user, 1);
-    const expectedReport = {
-        date: dateToReport,
-        matchup: [{
-            name: 'LA Kardashians',
-            roster: expect.arrayContaining([{
-                name: 'CJ McCollum',
-                selected_position: 'PG',
-                team: 'POR',
-                stats: {
-                    projected: {
-                        'GP': 1,
-                        'MIN': 35.6,
-                        'FGP': 0.455,
-                        'FTP': 0.779,
-                        '3PM': 2.7,
-                        'PTS': 21.4,
-                        'REB': 4.1,
-                        'AST': 3.8,
-                        'STL': 0.8,
-                        'BLK': 0.5,
-                        'TO': 1.8
-                    }
-                }
-            }]),
-            teamTotal: {
-                projected: expect.objectContaining({
-                    'GP': 1
-                })
-            }
-        }, {
-            name: 'Manglre',
-            roster:
-                expect.arrayContaining([
-                    expect.objectContaining({
-                        stats: {
-                            projected: expect.objectContaining(
-                                {
-                                    'GP': 0,
-                                    'PTS': 0
-                                })
-                        }
-                    }),
-                    expect.objectContaining({
-                        stats: {
-                            projected: expect.objectContaining(
-                                {
-                                    'GP': 1,
-                                    'PTS': 11.9
-                                })
-                        }
-                    })
-                ]),
-            teamTotal: {
-                projected: expect.objectContaining({
-                    'GP': 1,
-                    'PTS': 11.9
-
-                })
-            }
-        }]
+function mockStatsService() {
+    const dailyStatsRetrieved = {
+        'MIN': 25.6,
+        'FGP': 35.5,
+        'FTP': 67.9,
+        '3PM': 1.5,
+        'PTS': 20.4,
+        'REB': 3.1,
+        'AST': 2.8,
+        'STL': 1.8,
+        'BLK': 1.5,
+        'TO': 2.8
     };
-    expect(scoutReport[0]).toMatchObject(expectedReport);
-});
+    const mockRetrieveStats = jest.fn();
+    StatsService.prototype.retrieveStats = mockRetrieveStats;
+    mockRetrieveStats.mockImplementation((dateToReport, playerName) => {
+        if (playerName === 'CJ McCollum') {
+            return Promise.resolve(dailyStatsRetrieved);
+        } else {
+            return Promise.resolve(null);
+        }
+    });
+}
