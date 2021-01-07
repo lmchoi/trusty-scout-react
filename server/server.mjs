@@ -6,8 +6,8 @@ import { Strategy } from 'openid-client';
 
 import expressSesssion from 'express-session';
 import passport from 'passport';
-import Scout from './scout.mjs';
-import StatsFetcher from './stats-fetcher.mjs';
+import Scout from './services/scout.mjs';
+import StatsFetcher from './services/stats-fetcher.mjs';
 
 const options = {
   key: readFileSync('key.pem'),

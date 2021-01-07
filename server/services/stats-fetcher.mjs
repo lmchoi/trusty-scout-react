@@ -1,6 +1,6 @@
 import PouchDB from 'pouchdb';
 import got from 'got';
-import {utcMsToEstDate} from './fancy-date.mjs'
+import {utcMsToEstDate} from '../utils/fancy-date.mjs'
 
 const db = new PouchDB('scoutdb');
 

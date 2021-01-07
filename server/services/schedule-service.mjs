@@ -1,6 +1,6 @@
 import parser from 'fast-xml-parser';
 import fs from 'fs';
-import {stringToDate} from './fancy-date.mjs'
+import {stringToDate} from '../utils/fancy-date.mjs'
 
 function sameDate(date1, date2) {
     return date1.getUTCFullYear() === date2.getUTCFullYear() &&
