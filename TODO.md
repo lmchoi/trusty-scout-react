@@ -1,9 +1,25 @@
 TODO
+* I want to know the stats of the last 5, 10 games, and last season so I can see a trend
+* I want to know about the other teams that week
+
+
 * I want to know how accurate is the projections against real data
 * I want to know the FG %
-* I want to know about the other teams that week
 * I want to know which player is doing better than expected
 * I want to know which player to add/drop
+
+DESIGN
+
+
+* compare match up for the week
+    * show expected values for the day
+        * range - to indicate level of confidence - how to calculate?
+    * show expected values up to this day in the week
+    * show actual values for games played
+* show trends of a player
+    * last 5, 10 games
+    * last season
+* show all teams
 
 FIX
 Consider fetching schedule from nba.com instead of XML
@@ -13,7 +29,6 @@ how to allow for updates to stats/schedules after already fetched?
 
 SPEED
 store stats by player
-
 
 by player - list player
 past 5 games
