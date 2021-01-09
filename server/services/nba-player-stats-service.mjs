@@ -5,6 +5,9 @@ const STATS_URL = `https://uk.global.nba.com/stats2/league/playerstats.json?conf
 const responseCache = new Map();
 
 export default class NbaPlayerStatsService {    
+    constructor() {
+        this.last5GamesStats = new Map();
+    }
 
     extractStats({
         games: GP,
@@ -54,14 +57,18 @@ export default class NbaPlayerStatsService {
         }
     }
 
-    async getLastFiveGamesForAllPlayers() {
-        const response = await got(STATS_URL, {cache: responseCache}).json();
+    refresh() {
+        (async() => {
+            const response = await got(STATS_URL, {cache: responseCache}).json();
 
-        const stats = response.payload.players.map(player => this.extractPlayer(player))
+            response.payload.players.forEach(p => {
+                const player = this.extractPlayer(p);
+                this.last5GamesStats.set(player.name, player); 
+            });
+        })();
+    }
 
-        return {
-            players: stats
-        }
-
+    getLastFiveGames(playerName) {
+        return this.last5GamesStats.get(playerName);
     }
 }

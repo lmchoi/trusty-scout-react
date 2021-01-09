@@ -22,6 +22,7 @@ const StatsTable = (prop) => {
       <table>
         <tbody>
           <tr>
+            <th>Team</th>
             {
               matchupStats.categories.map(
                 categoryHeader => <th>{categoryHeader}</th>
@@ -29,16 +30,18 @@ const StatsTable = (prop) => {
             }
           </tr>
           <tr>
+            <td>{matchupStats.teamName1}</td>
             {
               matchupStats.teamStats1.map(
-                teamStats1 => <td>{teamStats1.toFixed(3)}</td>
+                teamStats1 => <td>{teamStats1.toFixed(1)}</td>
               )
             }
           </tr>
           <tr>
+            <td>{matchupStats.teamName2}</td>
             {
               matchupStats.teamStats2.map(
-                teamStats2 => <td>{teamStats2.toFixed(3)}</td>
+                teamStats2 => <td>{teamStats2.toFixed(1)}</td>
               )
             }
           </tr>
@@ -54,7 +57,7 @@ const StatsTable = (prop) => {
 
 const Home = () => {
   const [report, setReport] = useState(null);
-  const [week, setWeek] = React.useState(2);
+  const [week, setWeek] = React.useState(3);
   useEffect(() => {
     (async () => {
       const url = `https://localhost:8080/matchup?week=${week}`;
@@ -67,17 +70,44 @@ const Home = () => {
   }, [week]);
 
   const [matchupStats, setMatchupStats] = useState(null);
-  const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(1);
+  const [daysSinceStartOfWeek, setDaysSinceStartOfWeek] = React.useState(7);
   useEffect(() => {
     (() => {
       if (report != null) {
         console.log(report);
-        const categories = Object.keys(report[0].matchup[0].teamTotal.projected);
-
+        // const categories = Object.keys(report[0].matchup[0].teamTotal.projected);
+        const categories = [
+          'GP',
+          'MIN',
+          'FGM',
+          'FGA',
+          'FGP',//4
+          'FTM',
+          'FTA',
+          'FTP',//7
+          '3PM',
+          '3PA',
+          '3PP',//10
+          'PTS',
+          'REB',
+          'AST',
+          'STL',
+          'BLK',
+          'TO'];
+        const teamStats0 = categories.map(stat => calculateCateTotal(report, 0, stat, daysSinceStartOfWeek));
+        teamStats0[4] = teamStats0[2] / teamStats0[3] * 100;
+        teamStats0[7] = teamStats0[5] / teamStats0[6] * 100;
+        teamStats0[10] = teamStats0[8] / teamStats0[9] * 100;
+        const teamStats1 = categories.map(stat => calculateCateTotal(report, 1, stat, daysSinceStartOfWeek));
+        teamStats1[4] = teamStats1[2] / teamStats1[3] * 100;
+        teamStats1[7] = teamStats1[5] / teamStats1[6] * 100;
+        teamStats1[10] = teamStats1[8] / teamStats1[9] * 100;
         setMatchupStats({
           categories: categories,
-          teamStats1: categories.map(stat => calculateCateTotal(report, 0, stat, daysSinceStartOfWeek)),
-          teamStats2: categories.map(stat => calculateCateTotal(report, 1, stat, daysSinceStartOfWeek))
+          teamName1: report[0].matchup[0].name,
+          teamStats1: teamStats0,
+          teamName2: report[0].matchup[1].name,
+          teamStats2: teamStats1
         });
       }
     })();
@@ -102,6 +132,8 @@ const Home = () => {
           <MenuItem value={3}>3</MenuItem>
           <MenuItem value={4}>4</MenuItem>
           <MenuItem value={5}>5</MenuItem>
+          <MenuItem value={6}>6</MenuItem>
+          <MenuItem value={7}>7</MenuItem>
         </Select>
       </FormControl>
 
@@ -111,7 +143,7 @@ const Home = () => {
           labelId="day-select-label"
           id="day-select"
           value={daysSinceStartOfWeek}
-          defaultValue={1}
+          defaultValue={7}
           onChange={(e) => setDaysSinceStartOfWeek(e.target.value)}
         >
           <MenuItem value={1}>1</MenuItem>

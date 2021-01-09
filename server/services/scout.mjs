@@ -2,6 +2,7 @@ import YahooFantasyService from './yahoo-fantasy-service.mjs'
 import ScheduleService from './schedule-service.mjs'
 import ProjectionService from './projection-service.mjs'
 import StatsService from './stats-service.mjs'
+import NbaPlayerStatsService from './nba-player-stats-service.mjs'
 
 // TODO what timezone is this?
 const SEASON_START_DATE = new Date('2020-12-22');
@@ -31,14 +32,21 @@ export default class Scout {
         this.scheduleService = new ScheduleService();
         this.ProjectionService = new ProjectionService();
         this.statsService = new StatsService();
+        this.nbaPlayerStatsService = new NbaPlayerStatsService();
     }
 
     setPlayerGameStats(stats, playerStats) {
         stats['GP'] = 1;
         stats['MIN'] = playerStats['MIN'];
+        stats['FGA'] = playerStats['FGA'];
+        stats['FGM'] = playerStats['FGM'];
         stats['FGP'] = playerStats['FGP'];
+        stats['FTA'] = playerStats['FTA'];
+        stats['FTM'] = playerStats['FTM'];
         stats['FTP'] = playerStats['FTP'];
-        stats['3PM'] = playerStats['3PM'];
+        stats['3PA'] = playerStats['TPA'];
+        stats['3PM'] = playerStats['TPM'];
+        stats['3PP'] = playerStats['TPP'];
         stats['PTS'] = playerStats['PTS'];
         stats['REB'] = playerStats['REB'];
         stats['AST'] = playerStats['AST'];
@@ -64,9 +72,15 @@ export default class Scout {
                 projected: {
                     'GP': 0,
                     'MIN': 0,
+                    'FGA': 0,
+                    'FGM': 0,
                     'FGP': 0,
+                    'FTA': 0,
+                    'FTM': 0,
                     'FTP': 0,
+                    '3PA': 0,
                     '3PM': 0,
+                    '3PP': 0,
                     'PTS': 0,
                     'REB': 0,
                     'AST': 0,
@@ -74,19 +88,22 @@ export default class Scout {
                     'BLK': 0,
                     'TO': 0
                 },
-                actual: {
-                    'GP': 0,
-                    'MIN': 0,
-                    'FGP': 0,
-                    'FTP': 0,
-                    '3PM': 0,
-                    'PTS': 0,
-                    'REB': 0,
-                    'AST': 0,
-                    'STL': 0,
-                    'BLK': 0,
-                    'TO': 0
-                }
+                // last5PgAvg: {
+
+                // },
+                // actual: {
+                //     'GP': 0,
+                //     'MIN': 0,
+                //     'FGP': 0,
+                //     'FTP': 0,
+                //     '3PM': 0,
+                //     'PTS': 0,
+                //     'REB': 0,
+                //     'AST': 0,
+                //     'STL': 0,
+                //     'BLK': 0,
+                //     'TO': 0
+                // }
                 // // last5GamesPgAvg: {
                 // // },
                 // // lastSeasonPgAvg: {
@@ -99,9 +116,16 @@ export default class Scout {
 
     calculateProjectedPlayerStats(player, schedule, projections) {
         if (this.isPlayerPlaying(schedule, player)) {
-            const playerStats = projections[player.name];
+            const playerStats = this.nbaPlayerStatsService.getLastFiveGames(player.name);
+            if (playerStats != null) {
+                this.setPlayerGameStats(player.stats.projected, playerStats.stats);
+            } else {
+                console.log('unable to find stats for: ' + player.name);
+            }
+
+            // const playerStats = projections[player.name];
             // TODO check if projections is found
-            this.setPlayerGameStats(player.stats.projected, playerStats);
+            // this.setPlayerGameStats(player.stats.projected, playerStats);
         }
     }
 
@@ -118,9 +142,15 @@ export default class Scout {
         let totalStats = {
             'GP': 0,
             'MIN': 0,
+            'FGA': 0,
+            'FGM': 0,
             'FGP': 0,
+            'FTA': 0,
+            'FTM': 0,
             'FTP': 0,
+            '3PA': 0,
             '3PM': 0,
+            '3PP': 0,
             'PTS': 0,
             'REB': 0,
             'AST': 0,
@@ -134,8 +164,11 @@ export default class Scout {
             const ps = player.stats.projected;
             totalStats['GP'] += ps['GP'];
             totalStats['MIN'] += ps['MIN'];
-            totalStats['FGP'] += ps['FGP'];
-            totalStats['FTP'] += ps['FTP'];
+            totalStats['FGA'] += ps['FGA'];
+            totalStats['FGM'] += ps['FGM'];
+            totalStats['FTA'] += ps['FTA'];
+            totalStats['FTM'] += ps['FTM'];
+            totalStats['3PA'] += ps['3PA'];
             totalStats['3PM'] += ps['3PM'];
             totalStats['PTS'] += ps['PTS'];
             totalStats['REB'] += ps['REB'];
@@ -145,6 +178,10 @@ export default class Scout {
             totalStats['TO'] += ps['TO'];
         });
 
+        totalStats['FGP'] = totalStats['FGM'] / totalStats['FGA'];
+        totalStats['FTP'] = totalStats['FTM'] / totalStats['FTA'];
+        totalStats['3PP'] = totalStats['3PM'] / totalStats['3PA'];
+
         return totalStats;
     }
 
@@ -152,7 +189,7 @@ export default class Scout {
         let playerStats = team.roster.map(player => this.createPlayerDailyModel(player));
         playerStats.forEach(player => {
             this.calculateProjectedPlayerStats(player, schedule, projections);
-            this.retrievePlayerGameStats(dateToReport, player);
+            // this.retrievePlayerGameStats(dateToReport, player);
         });
 
         return {
@@ -191,6 +228,8 @@ export default class Scout {
         const matchup = await this.fantasyService.retrieveMatchup(user, week);
         const team1 = matchup.matchup[0].team_key;
         const team2 = matchup.matchup[1].team_key;
+
+        this.nbaPlayerStatsService.refresh();
 
         const report = [];
         let dateToReport = getStartOfWeek(week);

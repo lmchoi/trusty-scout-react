@@ -26,6 +26,9 @@ test('generate scout report for a given date', async () => {
                 selected_position: 'PG',
                 team: 'POR',
                 stats: {
+                    // last5PgAvg: {
+
+                    // },
                     projected: {
                         'GP': 1,
                         'MIN': 35.6,
@@ -39,19 +42,19 @@ test('generate scout report for a given date', async () => {
                         'BLK': 0.5,
                         'TO': 1.8
                     },
-                    actual: {
-                        'GP': 1,
-                        'MIN': 25.6,
-                        'FGP': 35.5,
-                        'FTP': 67.9,
-                        '3PM': 1.5,
-                        'PTS': 20.4,
-                        'REB': 3.1,
-                        'AST': 2.8,
-                        'STL': 1.8,
-                        'BLK': 1.5,
-                        'TO': 2.8
-                    }
+                    // actual: {
+                    //     'GP': 1,
+                    //     'MIN': 25.6,
+                    //     'FGP': 35.5,
+                    //     'FTP': 67.9,
+                    //     '3PM': 1.5,
+                    //     'PTS': 20.4,
+                    //     'REB': 3.1,
+                    //     'AST': 2.8,
+                    //     'STL': 1.8,
+                    //     'BLK': 1.5,
+                    //     'TO': 2.8
+                    // }
                 }
             }]),
             teamTotal: {
@@ -70,19 +73,22 @@ test('generate scout report for a given date', async () => {
                                     'GP': 0,
                                     'PTS': 0
                                 }),
-                            actual: {
-                                'GP': 0,
-                                'MIN': 0,
-                                'FGP': 0,
-                                'FTP': 0,
-                                '3PM': 0,
-                                'PTS': 0,
-                                'REB': 0,
-                                'AST': 0,
-                                'STL': 0,
-                                'BLK': 0,
-                                'TO': 0
-                            }
+                            // last5PgAvg: {
+
+                            // },
+                            // actual: {
+                            //     'GP': 0,
+                            //     'MIN': 0,
+                            //     'FGP': 0,
+                            //     'FTP': 0,
+                            //     '3PM': 0,
+                            //     'PTS': 0,
+                            //     'REB': 0,
+                            //     'AST': 0,
+                            //     'STL': 0,
+                            //     'BLK': 0,
+                            //     'TO': 0
+                            // }
                         }
                     }),
                     expect.objectContaining({
@@ -92,19 +98,22 @@ test('generate scout report for a given date', async () => {
                                     'GP': 1,
                                     'PTS': 11.9
                                 }),
-                            actual: {
-                                'GP': 0,
-                                'MIN': 0,
-                                'FGP': 0,
-                                'FTP': 0,
-                                '3PM': 0,
-                                'PTS': 0,
-                                'REB': 0,
-                                'AST': 0,
-                                'STL': 0,
-                                'BLK': 0,
-                                'TO': 0
-                            }
+                            // last5PgAvg: {
+
+                            // },
+                            // actual: {
+                            //     'GP': 0,
+                            //     'MIN': 0,
+                            //     'FGP': 0,
+                            //     'FTP': 0,
+                            //     '3PM': 0,
+                            //     'PTS': 0,
+                            //     'REB': 0,
+                            //     'AST': 0,
+                            //     'STL': 0,
+                            //     'BLK': 0,
+                            //     'TO': 0
+                            // }
                         }
                     })
                 ]),

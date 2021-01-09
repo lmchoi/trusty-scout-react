@@ -8,58 +8,55 @@ test('retrieve matchup for a given week', async () => {
 
     const statsService = new NbaPlayerStatsService();
 
-    const expectedMatchup = {
-        players: [
-            {
-                'code': 'bradley_beal',
-                'name': 'Bradley Beal',
-                'stats': {
-                    'GP': 5,
-                    'MIN': 35.2,
-                    "FGA": 25.6,
-                    "FGM": 13.0,
-                    'FGP': 50.8,
-                    "FTA": 9.4,
-                    "FTM": 8.2,
-                    'FTP': 87.2,
-                    "TPA": 6.4,
-                    'TPM': 3.2,
-                    "TPP": 50.0,
-                    'PTS': 37.4,
-                    'REB': 5.4,
-                    'AST': 4.6,
-                    'STL': 0.8,
-                    'BLK': 0.8,
-                    'TO': 3.2
-                }
-            },
-            {
-                "code": "nikola_jokic",
-                "name": "Nikola Jokic",
-                "stats": {
-                    "GP": 5,
-                    "MIN": 35.6,
-                    "FGA": 18.0,
-                    "FGM": 10.0,
-                    "FGP": 55.6,
-                    "FTA": 6.4,
-                    "FTM": 5.2,
-                    "FTP": 81.3,
-                    "TPA": 4.0,
-                    "TPM": 1.8,
-                    "TPP": 45.0,
-                    "PTS": 27.0,
-                    "REB": 11.4,
-                    "AST": 9.0,
-                    "STL": 1.6,
-                    "BLK": 0.2,
-                    "TO": 5.0
-                },
-            }]
-    };
-
-    const matchup = await statsService.getLastFiveGamesForAllPlayers();
-    expect(matchup).toMatchObject(expectedMatchup);
+    await statsService.refresh();
+    const bbStats = statsService.getLastFiveGames('Bradley Beal');
+    const jokerStats = statsService.getLastFiveGames('Nikola Jokic');
+    expect(bbStats).toMatchObject({
+        'code': 'bradley_beal',
+        'name': 'Bradley Beal',
+        'stats': {
+            'GP': 5,
+            'MIN': 35.2,
+            "FGA": 25.6,
+            "FGM": 13.0,
+            'FGP': 50.8,
+            "FTA": 9.4,
+            "FTM": 8.2,
+            'FTP': 87.2,
+            "TPA": 6.4,
+            'TPM': 3.2,
+            "TPP": 50.0,
+            'PTS': 37.4,
+            'REB': 5.4,
+            'AST': 4.6,
+            'STL': 0.8,
+            'BLK': 0.8,
+            'TO': 3.2
+        }
+    });
+    expect(jokerStats).toMatchObject({
+        "code": "nikola_jokic",
+        "name": "Nikola Jokic",
+        "stats": {
+            "GP": 5,
+            "MIN": 35.6,
+            "FGA": 18.0,
+            "FGM": 10.0,
+            "FGP": 55.6,
+            "FTA": 6.4,
+            "FTM": 5.2,
+            "FTP": 81.3,
+            "TPA": 4.0,
+            "TPM": 1.8,
+            "TPP": 45.0,
+            "PTS": 27.0,
+            "REB": 11.4,
+            "AST": 9.0,
+            "STL": 1.6,
+            "BLK": 0.2,
+            "TO": 5.0
+        },
+    });
 });
 
 const playerStatsResponse = {
