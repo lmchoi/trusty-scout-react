@@ -36,7 +36,8 @@ export default class YahooFantasyService {
             player_key: player.player_key,
             name: player.name.full,
             selected_position: player.selected_position.position,
-            team: this.fixDodgyAbbr(player.editorial_team_abbr.toUpperCase())
+            team: this.fixDodgyAbbr(player.editorial_team_abbr.toUpperCase()),
+            status: player.status ? player.status : ''
         };
     }
 

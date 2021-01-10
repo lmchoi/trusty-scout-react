@@ -60,7 +60,7 @@ export default class Scout {
         if (!schedule) {
             return false;
         }
-        return (!['BN', 'IL'].includes(player.selected_position)) && schedule.get(player.team) != null;
+        return (!['BN', 'IL'].includes(player.selected_position)) && (!['O', 'INJ'].includes(player.status)) && schedule.get(player.team) != null;
     }
 
     createPlayerDailyModel(player) {
@@ -68,6 +68,7 @@ export default class Scout {
             name: player.name,
             selected_position: player.selected_position,
             team: player.team,
+            status: player.status,
             stats: {
                 projected: {
                     'GP': 0,

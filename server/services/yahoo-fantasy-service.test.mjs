@@ -47,7 +47,8 @@ test('retrieve roster on a given date', async () => {
         player_key: '402.p.5161',
         name: 'CJ McCollum',
         selected_position: 'PG',
-        team: 'POR'
+        team: 'POR',
+        status: ''
       }])
     }, {
       name: 'Manglre',
@@ -58,7 +59,8 @@ test('retrieve roster on a given date', async () => {
           player_key: '402.p.5464',
           name: 'Kristaps Porzingis',
           selected_position: 'IL',
-          team: 'DAL'
+          team: 'DAL',
+          status: 'INJ'
         }
       ])
     }]
