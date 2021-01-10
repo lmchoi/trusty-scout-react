@@ -1,10 +1,7 @@
 TODO
 * I want to know the stats of the last 5, 10 games, and last season so I can see a trend
 * I want to know about the other teams that week
-
-
 * I want to know how accurate is the projections against real data
-* I want to know the FG %
 * I want to know which player is doing better than expected
 * I want to know which player to add/drop
 
